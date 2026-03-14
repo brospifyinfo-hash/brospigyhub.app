@@ -51,7 +51,10 @@ export async function loginWithLicenseKey(_prev: State, formData: FormData): Pro
     .ilike('key_value', searchPattern)
     .maybeSingle();
 
-  if (keyError || !keyRow) {
+  if (keyError) {
+    return { error: `Key-Abfrage fehlgeschlagen: ${keyError.message}` };
+  }
+  if (!keyRow) {
     return { error: 'Ungültiger oder unbekannter Lizenzkey. Key zuerst im Admin unter „Keys (Masse)“ anlegen.' };
   }
   if (keyRow.active === false) {
@@ -75,7 +78,7 @@ export async function loginWithLicenseKey(_prev: State, formData: FormData): Pro
       return { error: createError?.message ?? 'User konnte nicht angelegt werden.' };
     }
     const encrypted = encryptPassword(password);
-    await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from('internal_keys')
       .update({
         user_id: newUser.user.id,
@@ -83,17 +86,30 @@ export async function loginWithLicenseKey(_prev: State, formData: FormData): Pro
         encrypted_password: encrypted,
       })
       .eq('id', keyId);
+    if (updateError) {
+      return { error: `Key konnte nicht aktualisiert werden: ${updateError.message}` };
+    }
   } else {
     // Bereits eingelöster Key: User-Daten zum Anmelden verwenden
     if (!keyRow.user_id || !keyRow.encrypted_password) {
       return { error: 'Dieser Key ist ungültig konfiguriert. Bitte Admin kontaktieren.' };
     }
-    const { data: user } = await supabaseAdmin.auth.admin.getUserById(keyRow.user_id);
+    const { data: user, error: userError } = await supabaseAdmin.auth.admin.getUserById(keyRow.user_id);
+    if (userError) {
+      return { error: `Zugehöriger Account konnte nicht geladen werden: ${userError.message}` };
+    }
     if (!user?.user?.email) {
       return { error: 'Zugehöriger Account nicht gefunden.' };
     }
     email = user.user.email;
-    password = decryptPassword(keyRow.encrypted_password);
+    try {
+      password = decryptPassword(keyRow.encrypted_password);
+    } catch {
+      return {
+        error:
+          'Der gespeicherte Key-Login ist ungültig oder veraltet. Bitte Key im Admin neu erstellen und erneut einlösen.',
+      };
+    }
   }
 
   const supabase = await createClient();

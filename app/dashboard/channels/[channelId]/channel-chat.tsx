@@ -77,6 +77,7 @@ export function ChannelChat({
   const [oldestCreatedAt, setOldestCreatedAt] = useState<string | null>(initialOldestCreatedAt);
   const [loadingMore, setLoadingMore] = useState(false);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+  const [showComposerOptions, setShowComposerOptions] = useState(false);
   const effectiveAllowText = isPrivileged ? true : allowText;
   const effectiveCanAttach = isPrivileged ? true : (allowImages || allowUserImages);
 
@@ -310,114 +311,146 @@ export function ChannelChat({
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="flex-shrink-0 rounded-2xl glass-panel px-5 py-3 mb-4">
-        <h2 className="font-semibold text-[var(--color-text)]">{channelName}</h2>
+    <div className="flex h-full min-h-0 flex-col">
+      <header className="mb-3 flex-shrink-0 rounded-2xl glass-panel px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-2">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--color-accent)] shadow-[0_0_8px_rgba(149,191,71,0.65)]" />
+          <h2 className="truncate text-sm font-semibold text-[var(--color-text)] sm:text-base">{channelName}</h2>
+        </div>
       </header>
 
       {(ctaText || ctaUrl) && (
-        <div className="flex-shrink-0 rounded-2xl glass-panel px-5 py-2.5 mb-4">
+        <div className="mb-3 flex-shrink-0 rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-2.5">
           {ctaUrl ? (
-            <a
-              href={ctaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--color-accent)] font-medium hover:underline"
-            >
+            <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-[var(--color-accent)] hover:underline">
               {ctaText || ctaUrl}
             </a>
           ) : (
-            <span className="text-[var(--color-text)]">{ctaText}</span>
+            <span className="text-sm text-[var(--color-text)]">{ctaText}</span>
           )}
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="scrollbar-hide min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 sm:px-1">
         {hasMore && (
-          <div className="flex justify-center py-2">
+          <div className="flex justify-center py-1">
             <button
               type="button"
               onClick={handleLoadMore}
               disabled={loadingMore}
-              className="rounded-2xl glass-panel px-5 py-2.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] disabled:opacity-50 transition-colors"
+              className="rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] disabled:opacity-50"
             >
               {loadingMore ? 'Laden…' : 'Mehr laden'}
             </button>
           </div>
         )}
+
+        {messages.length === 0 && (
+          <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-5 text-center">
+            <p className="text-sm text-[var(--color-text-muted)]">Noch keine Nachrichten. Starte den Chat.</p>
+          </div>
+        )}
+
         {messages.map((m) => {
           const isOwn = m.user_id === currentUserId;
           const showUnapproved = isPrivileged && m.is_approved === false;
           const hasAttachment = Boolean(m.attachment_url || (m.attachment_base64 && m.attachment_content_type));
           const downloadSource = getAttachmentDownloadSource(m);
+
           return (
-            <div
-              key={m.id}
-              className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`w-full max-w-[75%] rounded-2xl p-4 border shadow-sm ${isOwn ? 'border-[var(--color-accent)]/50 bg-[var(--color-accent-muted)]' : 'border-[var(--glass-border)] bg-[var(--glass-bg-dark)] backdrop-blur-xl'}`}>
+            <div key={m.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`w-full max-w-[88%] rounded-2xl border p-3 shadow-sm sm:max-w-[75%] sm:p-4 ${
+                  isOwn
+                    ? 'border-[var(--color-accent)]/50 bg-[var(--color-accent-muted)]'
+                    : 'border-[var(--glass-border)] bg-[var(--glass-bg-dark)] backdrop-blur-xl'
+                }`}
+              >
                 <div className="min-w-0">
                   {showUnapproved && (
-                    <span className="inline-block rounded-2xl bg-amber-500/20 text-amber-400 text-xs font-medium px-2.5 py-1 mb-2">
+                    <span className="mb-2 inline-block rounded-2xl bg-amber-500/20 px-2.5 py-1 text-xs font-medium text-amber-300">
                       Wartet auf Freigabe
                     </span>
                   )}
-                  <p className="text-[var(--color-text)] break-words">{m.content || '(Anhang)'}</p>
+
+                  <p className="break-words text-sm leading-relaxed text-[var(--color-text)] sm:text-[15px]">
+                    {m.content || '(Anhang)'}
+                  </p>
+
                   {hasAttachment && (
                     <div
-                      className="mt-2 inline-block rounded-2xl overflow-hidden max-w-full"
+                      className="mt-2 overflow-hidden rounded-2xl border border-[var(--glass-border)]/70"
                       style={shouldApplyAttachmentBackground(m) ? { backgroundColor: m.attachment_background_color ?? undefined } : undefined}
                     >
                       {(m.attachment_base64 && m.attachment_content_type) ? (
                         <img
                           src={`data:${m.attachment_content_type};base64,${m.attachment_base64}`}
                           alt=""
-                          className="max-h-64 max-w-full object-contain"
+                          className="max-h-72 w-full object-contain"
                         />
                       ) : m.attachment_url && /\.(png|jpe?g|gif|webp)(\?|$)/i.test(m.attachment_url) ? (
-                        <img src={m.attachment_url} alt="" className="max-h-64 max-w-full object-contain" />
-                      ) : <div className="px-4 py-3 text-sm text-[var(--color-text-muted)]">Anhang bereit zum Download</div>}
+                        <img src={m.attachment_url} alt="" className="max-h-72 w-full object-contain" />
+                      ) : (
+                        <div className="px-3 py-2 text-xs text-[var(--color-text-muted)]">Anhang bereit zum Download</div>
+                      )}
                     </div>
                   )}
+
                   {showDownloadButton && downloadSource && (
                     <div className="mt-2">
                       <button
                         type="button"
                         onClick={() => forceDownload(downloadSource, getAttachmentDownloadFilename(m))}
-                        className="inline-flex items-center gap-1.5 rounded-2xl border border-[var(--color-accent)]/35 bg-[var(--color-accent-muted)] px-3 py-1.5 text-xs font-semibold text-[var(--color-accent)] shadow-sm transition-colors hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-accent)]/35 bg-[var(--color-accent-muted)] px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
                       >
                         <span aria-hidden>⬇</span>
                         <span>{downloadButtonText}</span>
                       </button>
                     </div>
                   )}
+
                   {(m.button_text || m.button_url) && (
                     <a
                       href={m.button_url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-2 px-3 py-1.5 rounded-2xl bg-[var(--color-accent)] text-[var(--color-bg)] text-sm font-medium hover:bg-[var(--color-accent-hover)]"
+                      className="mt-2 inline-block rounded-xl bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-bg)] hover:bg-[var(--color-accent-hover)]"
                     >
                       {m.button_text || m.button_url}
                     </a>
                   )}
-                  {showCopyButton && m.content && (
-                    <button
-                      type="button"
-                      onClick={() => copyText(m.content!)}
-                      className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] mt-1 block"
-                    >
-                      Kopieren
-                    </button>
-                  )}
+
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    {showCopyButton && m.content && (
+                      <button
+                        type="button"
+                        onClick={() => copyText(m.content!)}
+                        className="text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-accent)]"
+                      >
+                        Kopieren
+                      </button>
+                    )}
+                    {isPrivileged && m.is_approved !== false && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await deleteMessage(m.id);
+                        }}
+                        className="text-[11px] text-[var(--color-text-muted)] hover:text-red-400"
+                      >
+                        Löschen
+                      </button>
+                    )}
+                  </div>
+
                   {showUnapproved && (
-                    <div className="flex gap-2 mt-2">
+                    <div className="mt-2 flex gap-2">
                       <button
                         type="button"
                         onClick={async () => {
                           await approveMessage(m.id);
                         }}
-                        className="rounded-2xl px-3 py-1.5 text-xs font-medium bg-[var(--color-accent)] text-[var(--color-bg)] hover:bg-[var(--color-accent-hover)]"
+                        className="rounded-xl bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-bg)] hover:bg-[var(--color-accent-hover)]"
                       >
                         Bestätigen
                       </button>
@@ -426,22 +459,11 @@ export function ChannelChat({
                         onClick={async () => {
                           await rejectMessage(m.id);
                         }}
-                        className="rounded-2xl px-3 py-1.5 text-xs font-medium border border-red-500/50 text-red-400 hover:bg-red-500/10"
+                        className="rounded-xl border border-red-500/50 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/10"
                       >
                         Ablehnen
                       </button>
                     </div>
-                  )}
-                  {isPrivileged && m.is_approved !== false && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        await deleteMessage(m.id);
-                      }}
-                      className="text-xs text-[var(--color-text-muted)] hover:text-red-400 mt-1 block"
-                    >
-                      Löschen
-                    </button>
                   )}
                 </div>
               </div>
@@ -451,45 +473,30 @@ export function ChannelChat({
       </div>
 
       <div
-        className={`flex-shrink-0 rounded-2xl glass-panel p-4 mt-4 transition-colors ${dragActive ? 'bg-[var(--color-accent-muted)] border-[var(--color-accent)]' : ''}`}
+        className={`mt-3 flex-shrink-0 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] p-3 backdrop-blur-xl transition-colors sm:p-4 ${
+          dragActive ? 'bg-[var(--color-accent-muted)] border-[var(--color-accent)]' : ''
+        }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={() => setDragActive(false)}
       >
         {!canPost ? (
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Du kannst in diesem Channel nicht posten.
-          </p>
+          <p className="text-sm text-[var(--color-text-muted)]">Du kannst in diesem Channel nicht posten.</p>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-2.5">
             {sendError && (
-              <p className="text-red-400 text-sm py-2 px-3 rounded-2xl bg-red-500/10 border border-red-500/20">
+              <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
                 {sendError}
               </p>
             )}
-            {dragActive && (
-              <p className="text-sm text-[var(--color-accent)] font-medium">Bild hier ablegen …</p>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input
-                type="text"
-                value={buttonText}
-                onChange={(e) => setButtonText(e.target.value)}
-                placeholder="Button-Text (optional)"
-                className="px-3 py-2 rounded-2xl bg-[var(--color-bg)]/80 border border-[var(--glass-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-              />
-              <input
-                type="url"
-                value={buttonUrl}
-                onChange={(e) => setButtonUrl(e.target.value)}
-                placeholder="Button-Link (optional)"
-                className="px-3 py-2 rounded-2xl bg-[var(--color-bg)]/80 border border-[var(--glass-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-              />
-            </div>
-            {effectiveCanAttach && (
-              <div className="flex flex-wrap items-center gap-2">
+            {dragActive && <p className="text-xs font-medium text-[var(--color-accent)]">Bild hier ablegen …</p>}
+
+            <div className="flex flex-wrap items-center gap-2">
+              {effectiveCanAttach && (
                 <label className="cursor-pointer">
-                  <span className="inline-block px-3 py-1.5 rounded-2xl bg-[var(--color-accent)] text-[var(--color-bg)] text-sm font-medium">Datei wählen</span>
+                  <span className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-xs font-medium text-[var(--color-text)]">
+                    Datei
+                  </span>
                   <input
                     type="file"
                     accept="image/*,.pdf"
@@ -497,52 +504,82 @@ export function ChannelChat({
                     className="sr-only"
                   />
                 </label>
-                {file && (
-                  <>
-                    <span className="text-[var(--color-text-muted)] text-sm truncate max-w-[140px]">{file.name}</span>
-                    {filePreviewUrl && (
-                      <div className="rounded-2xl overflow-hidden border border-[var(--glass-border)] bg-[var(--color-bg)] w-16 h-16 flex-shrink-0">
-                        <img src={filePreviewUrl} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    <label className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                      Hintergrund (z. B. PNG):
-                      <input
-                        type="color"
-                        value={attachmentBg || '#0a0a0a'}
-                        onChange={(e) => setAttachmentBg(e.target.value)}
-                        className="w-8 h-8 rounded-2xl border border-[var(--glass-border)] cursor-pointer bg-transparent"
-                      />
-                      <input
-                        type="text"
-                        value={attachmentBg}
-                        onChange={(e) => setAttachmentBg(e.target.value)}
-                        placeholder="#0a0a0a"
-                        className="w-24 px-2 py-1 rounded-2xl bg-[var(--color-bg)]/80 border border-[var(--glass-border)] text-[var(--color-text)] text-xs"
-                      />
-                    </label>
-                  </>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setShowComposerOptions((v) => !v)}
+                className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+              >
+                {showComposerOptions ? 'Optionen aus' : 'Optionen'}
+              </button>
+
+              {file && <span className="max-w-[170px] truncate text-xs text-[var(--color-text-muted)]">{file.name}</span>}
+            </div>
+
+            {filePreviewUrl && (
+              <div className="w-fit rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)] p-1">
+                <img src={filePreviewUrl} alt="" className="h-16 w-16 rounded-lg object-cover" />
+              </div>
+            )}
+
+            {showComposerOptions && (
+              <div className="space-y-2 rounded-2xl border border-[var(--glass-border)] bg-white/5 p-2.5">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <input
+                    type="text"
+                    value={buttonText}
+                    onChange={(e) => setButtonText(e.target.value)}
+                    placeholder="Button-Text (optional)"
+                    className="rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
+                  />
+                  <input
+                    type="url"
+                    value={buttonUrl}
+                    onChange={(e) => setButtonUrl(e.target.value)}
+                    placeholder="Button-Link (optional)"
+                    className="rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
+                  />
+                </div>
+                {file && file.type !== 'image/png' && (
+                  <label className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+                    Hintergrund
+                    <input
+                      type="color"
+                      value={attachmentBg || '#0a0a0a'}
+                      onChange={(e) => setAttachmentBg(e.target.value)}
+                      className="h-7 w-7 cursor-pointer rounded-lg border border-[var(--glass-border)] bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={attachmentBg}
+                      onChange={(e) => setAttachmentBg(e.target.value)}
+                      placeholder="#0a0a0a"
+                      className="w-24 rounded-lg border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-2 py-1 text-[11px] text-[var(--color-text)]"
+                    />
+                  </label>
                 )}
               </div>
             )}
-            <div className="flex gap-2">
+
+            <div className="flex items-end gap-2">
               {effectiveAllowText ? (
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={file ? textInputPlaceholderWithFile : textInputPlaceholder}
-                  className="flex-1 px-4 py-2.5 rounded-2xl bg-[var(--color-bg)]/80 border border-[var(--glass-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
+                  className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2.5 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                 />
               ) : (
-                <div className="flex-1 text-sm text-[var(--color-text-muted)] px-4 py-2.5 rounded-2xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80">
-                  {file ? "Nur Bild wird gesendet." : "Text ist in diesem Channel deaktiviert."}
+                <div className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text-muted)]">
+                  {file ? 'Nur Bild wird gesendet.' : 'Text ist in diesem Channel deaktiviert.'}
                 </div>
               )}
               <button
                 type="submit"
                 disabled={uploading || (!input.trim() && !file)}
-                className="px-5 py-2.5 rounded-2xl bg-[var(--color-accent)] text-[var(--color-bg)] font-semibold hover:bg-[var(--color-accent-hover)] disabled:opacity-50 shadow-md"
+                className="rounded-xl bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg)] shadow-sm hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
               >
                 {uploading ? '…' : sendButtonText}
               </button>
