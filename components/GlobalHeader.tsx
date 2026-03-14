@@ -14,16 +14,22 @@ export function GlobalHeader({ membersCount, isAdmin, logoUrl }: Props) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 font-semibold text-[var(--color-text)] text-lg tracking-tight"
+          className="flex items-center"
         >
           {logoUrl ? (
-            <Image src={logoUrl} alt="Brospify Logo" width={28} height={28} className="rounded-lg object-cover" />
+            <Image
+              src={logoUrl}
+              alt="App Logo"
+              width={132}
+              height={36}
+              className="h-9 w-auto rounded-md object-contain"
+              priority
+            />
           ) : (
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-accent-muted)] text-xs text-[var(--color-accent)]">
-              B
+            <span className="rounded-full border border-[var(--glass-border)] bg-white/5 px-3 py-1 text-xs text-[var(--color-text-muted)]">
+              Kein Logo
             </span>
           )}
-          <span>Brospify Hub</span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-white/5 px-2.5 py-1 text-xs text-[var(--color-text-muted)]">
