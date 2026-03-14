@@ -1,6 +1,8 @@
 import { isAdminSession } from '@/lib/admin-auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { createServiceClient } from '@/lib/supabase/server';
+import { AppLogo } from '@/components/AppLogo';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,17 +25,30 @@ export default async function AdminProtectedLayout({
   const ok = await isAdminSession();
   if (!ok) redirect('/login');
 
+  let logoUrl: string | null = null;
+  try {
+    const { data } = await createServiceClient()
+      .from('ui_texts')
+      .select('value')
+      .eq('key', 'header.logo_url')
+      .maybeSingle();
+    const v = data?.value;
+    logoUrl = typeof v === 'string' && v.trim() ? v.trim() : null;
+  } catch {
+    logoUrl = null;
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <header className="mx-auto max-w-6xl p-4 sm:p-6">
         <div className="rounded-3xl glass-panel border border-[var(--glass-border)] p-4 shadow-md">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Link
-                href="/admin"
-                className="font-semibold text-[var(--color-accent)] text-lg"
-              >
-                Brospify Admin
+              <Link href="/admin" className="flex items-center gap-2">
+                <AppLogo logoUrl={logoUrl} className="h-8 w-auto rounded-md object-contain" />
+                <span className="font-semibold text-[var(--color-accent)] text-lg">
+                  Brospify Admin
+                </span>
               </Link>
               <Link
                 href="/dashboard"

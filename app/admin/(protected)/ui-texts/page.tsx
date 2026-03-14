@@ -15,7 +15,7 @@ export default async function AdminUiTextsPage({
   const error = typeof params.error === 'string' ? params.error : '';
 
   const service = createServiceClient();
-  const keys = Object.keys(UI_TEXT_FALLBACKS);
+  const keys = [...Object.keys(UI_TEXT_FALLBACKS), 'header.logo_url'];
   const { data } = await service.from('ui_texts').select('key, value').in('key', keys).order('key');
   const map = Object.fromEntries((data ?? []).map((row) => [row.key, row.value]));
 
@@ -40,9 +40,31 @@ export default async function AdminUiTextsPage({
         </p>
       )}
 
-      <section className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4">
-        <h2 className="text-lg font-semibold text-[var(--color-text)]">Header-Logo Upload</h2>
-        <form action={uploadHeaderLogo} className="mt-3 flex flex-wrap items-center gap-3">
+      <section className="rounded-2xl border-2 border-[var(--color-accent)]/40 bg-white/5 p-5">
+        <h2 className="text-lg font-semibold text-[var(--color-text)]">Header-Logo</h2>
+        <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+          <strong>Logo-URL einfügen</strong> (z.B. Supabase Storage) – wird sofort überall angezeigt. Oder Datei hochladen.
+        </p>
+        <form action={saveUiText} className="mt-4 flex flex-wrap items-end gap-3">
+          <input type="hidden" name="key" value="header.logo_url" />
+          <div className="flex-1 min-w-[300px]">
+            <label className="block text-sm font-medium text-[var(--color-text)] mb-1">Logo-URL</label>
+            <input
+              type="url"
+              name="value"
+              placeholder="https://xxx.supabase.co/storage/v1/object/public/assets/logo.png"
+              defaultValue={map['header.logo_url'] ?? ''}
+              className="w-full rounded-2xl border border-[var(--glass-border)] bg-[var(--color-bg)]/70 px-4 py-3 text-sm text-[var(--color-text)]"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-2xl bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)] shadow-sm hover:bg-[var(--color-accent-hover)]"
+          >
+            URL speichern
+          </button>
+        </form>
+        <form action={uploadHeaderLogo} className="mt-4 flex flex-wrap items-center gap-3">
           <input
             type="file"
             name="logo"
@@ -60,7 +82,9 @@ export default async function AdminUiTextsPage({
       </section>
 
       <section className="grid grid-cols-1 gap-3">
-        {keys.map((key) => (
+        {keys
+          .filter((k) => k !== 'header.logo_url')
+          .map((key) => (
           <form
             key={key}
             action={saveUiText}

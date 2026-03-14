@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { LoginForm } from './login-form';
+import { LoginHeader } from './login-header';
 import { isAdminSession } from '@/lib/admin-auth';
 import { getUiTexts, uiText, UI_TEXT_FALLBACKS } from '@/lib/ui-texts';
 
@@ -14,6 +15,7 @@ export default async function LoginPage() {
   if (await isAdminSession()) redirect('/admin');
 
   const texts = await getUiTexts([
+    'header.logo_url',
     'login.back',
     'login.hint',
     'login.placeholder.license',
@@ -28,9 +30,13 @@ export default async function LoginPage() {
     'login.card.title',
     'login.card.subtitle',
   ]);
+  const logoUrl = typeof texts['header.logo_url'] === 'string' && texts['header.logo_url'].trim()
+    ? texts['header.logo_url'].trim()
+    : null;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[var(--color-bg)] px-4 py-8 sm:px-6 sm:py-10">
+    <main className="relative min-h-screen overflow-hidden bg-[var(--color-bg)] px-4 pt-20 pb-8 sm:px-6 sm:pt-24 sm:pb-10">
+      <LoginHeader logoUrl={logoUrl} />
       <div className="pointer-events-none absolute -left-32 top-0 h-80 w-80 rounded-full bg-[var(--color-accent)]/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
 

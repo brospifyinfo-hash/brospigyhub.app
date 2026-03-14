@@ -1,16 +1,22 @@
 import Link from 'next/link';
 import { getUiTexts, uiText, UI_TEXT_FALLBACKS } from '@/lib/ui-texts';
+import { LoginHeader } from '@/app/login/login-header';
 
 export default async function HomePage() {
   const texts = await getUiTexts([
+    'header.logo_url',
     'home.title',
     'home.subtitle',
     'home.cta.primary',
     'home.cta.secondary',
   ]);
+  const logoUrl = typeof texts['header.logo_url'] === 'string' && texts['header.logo_url'].trim()
+    ? texts['header.logo_url'].trim()
+    : null;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-[var(--color-bg)]">
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 pt-24 bg-[var(--color-bg)]">
+      <LoginHeader logoUrl={logoUrl} />
       <div className="w-full max-w-md text-center">
         <h1 className="text-4xl font-bold tracking-tight text-[var(--color-text)] mb-3">
           {uiText(texts, 'home.title', UI_TEXT_FALLBACKS['home.title'])}
