@@ -3,6 +3,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminSession } from '@/lib/admin-auth';
 import { getUiTexts, UI_TEXT_FALLBACKS, uiText } from '@/lib/ui-texts';
+import { NewMessagesStat } from './new-messages-stat';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -12,7 +13,6 @@ export default async function DashboardPage() {
 
   let openTicketsCount = 0;
   let myMessagesCount = 0;
-  let newMessagesCount = 0;
   let recentTickets: { id: string; subject: string; status: string; created_at: string }[] = [];
   let recentMessages: { id: string; channel_id: string; content: string | null; created_at: string }[] = [];
   let channelNameById: Record<string, string> = {};
@@ -40,7 +40,6 @@ export default async function DashboardPage() {
     const [
       { count: openCount },
       { count: msgCount },
-      { count: newMsgCount },
       { data: ticketsData },
       { data: messagesData },
       { data: keyRowByUserId },
@@ -48,11 +47,6 @@ export default async function DashboardPage() {
     ] = await Promise.all([
       supabase.from('tickets').select('id', { count: 'exact', head: true }).eq('user_id', user.id).neq('status', 'resolved'),
       supabase.from('messages').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-      supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .neq('user_id', user.id)
-        .gte('created_at', new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString()),
       supabase.from('tickets').select('id, subject, status, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(4),
       supabase.from('messages').select('id, channel_id, content, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(4),
       service.from('internal_keys').select('active').eq('user_id', user.id).maybeSingle(),
@@ -63,7 +57,6 @@ export default async function DashboardPage() {
 
     openTicketsCount = openCount ?? 0;
     myMessagesCount = msgCount ?? 0;
-    newMessagesCount = newMsgCount ?? 0;
     recentTickets = ticketsData ?? [];
     recentMessages = messagesData ?? [];
 
@@ -151,13 +144,12 @@ export default async function DashboardPage() {
           </p>
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-white/5 p-4">
-              <p className="text-xs text-[var(--color-text-muted)]">Neue Nachrichten</p>
-              <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text)]">
-                <span>{newMessagesCount}</span>
-                {newMessagesCount > 0 && (
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,0.8)]" />
-                )}
-              </p>
+              <NewMessagesStat
+                initialLatestByChannel={channelCards.map((entry) => ({
+                  channelId: entry.id,
+                  latestMessageAt: entry.latestMessageAt,
+                }))}
+              />
             </div>
             <div className="rounded-2xl bg-white/5 p-4">
               <p className="text-xs text-[var(--color-text-muted)]">Offene Tickets</p>

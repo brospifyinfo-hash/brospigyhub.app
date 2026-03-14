@@ -80,6 +80,7 @@ export function ChannelChat({
   const [showComposerOptions, setShowComposerOptions] = useState(false);
   const effectiveAllowText = isPrivileged ? true : allowText;
   const effectiveCanAttach = isPrivileged ? true : (allowImages || allowUserImages);
+  const readStorageKey = `brospifyhub:last-read:${channelId}`;
 
   function onFileChange(f: File | null) {
     if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
@@ -165,6 +166,11 @@ export function ChannelChat({
       supabase.removeChannel(channel);
     };
   }, [channelId, isPrivileged]);
+
+  useEffect(() => {
+    const latestSeenAt = messages[messages.length - 1]?.created_at ?? new Date().toISOString();
+    window.localStorage.setItem(readStorageKey, latestSeenAt);
+  }, [messages, readStorageKey]);
 
   async function handleLoadMore() {
     if (!oldestCreatedAt || loadingMore) return;
