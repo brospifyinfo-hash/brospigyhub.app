@@ -1,25 +1,23 @@
-/**
- * Logo – Datei muss in public/logo.png liegen.
- * Pfad: /logo.png (Next.js liefert public/ unter / aus)
- */
-const LOGO_SRC = '/logo.png';
+/* eslint-disable @next/next/no-img-element */
+import logoSrc from '@/assets/logo.png';
 
 type Props = {
   className?: string;
   alt?: string;
 };
 
-export function AppLogo({ className = 'h-9 w-auto rounded-md object-contain', alt = 'Logo' }: Props) {
+export function AppLogo({
+  className = 'h-14 w-auto object-contain sm:h-16',
+  alt = 'Logo',
+}: Props) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={LOGO_SRC}
+      src={typeof logoSrc === 'string' ? logoSrc : logoSrc.src}
       alt={alt}
       className={className}
-      width={120}
-      height={36}
+      width={180}
+      height={64}
       loading="eager"
-      decoding="async"
     />
   );
 }
