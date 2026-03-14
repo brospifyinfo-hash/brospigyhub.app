@@ -210,11 +210,13 @@ export function ChannelChat({
         attachmentUrl = urlData.publicUrl;
       }
       setFile(null);
+      if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
+      setFilePreviewUrl(null);
       setAttachmentBg('');
     }
     const bt = buttonText.trim() || null;
     const bu = buttonUrl.trim() || null;
-    const bg = file?.type === 'image/png' ? null : (attachmentBg.trim() || null);
+    const bg = attachmentBg.trim() || null;
     const contentToSend = text || selectedFileName;
     const optMsg: Message = {
       id: `opt-${Date.now()}`,
@@ -305,14 +307,12 @@ export function ChannelChat({
 
   function shouldApplyAttachmentBackground(message: Message): boolean {
     if (!message.attachment_background_color) return false;
-    if (message.attachment_content_type?.includes('png')) return false;
-    if (message.attachment_url && /\.(png)(\?|$)/i.test(message.attachment_url)) return false;
     return true;
   }
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <header className="mb-3 flex-shrink-0 rounded-2xl glass-panel px-4 py-3 sm:px-5">
+      <header className="mb-2 flex-shrink-0 rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)]/90 px-4 py-3 shadow-md backdrop-blur-xl sm:mb-3 sm:px-5">
         <div className="flex items-center gap-2">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--color-accent)] shadow-[0_0_8px_rgba(149,191,71,0.65)]" />
           <h2 className="truncate text-sm font-semibold text-[var(--color-text)] sm:text-base">{channelName}</h2>
@@ -331,7 +331,7 @@ export function ChannelChat({
         </div>
       )}
 
-      <div className="scrollbar-hide min-h-0 flex-1 space-y-3 overflow-y-auto px-2 pb-4 sm:px-1">
+      <div className="scrollbar-hide min-h-0 flex-1 space-y-3 overflow-y-auto rounded-3xl border border-[var(--glass-border)] bg-[radial-gradient(120%_95%_at_10%_0%,rgba(149,191,71,0.10),transparent_58%),radial-gradient(130%_90%_at_100%_100%,rgba(77,138,255,0.14),transparent_62%),rgba(0,0,0,0.35)] px-2 py-2 pb-5 sm:px-3 sm:py-3">
         {hasMore && (
           <div className="flex justify-center py-1">
             <button
@@ -360,10 +360,10 @@ export function ChannelChat({
           return (
             <div key={m.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`w-full max-w-[88%] rounded-2xl border p-3 shadow-sm sm:max-w-[75%] sm:p-4 ${
+                className={`w-full max-w-[90%] rounded-[1.35rem] border p-3 shadow-sm sm:max-w-[75%] sm:p-4 ${
                   isOwn
-                    ? 'border-[var(--color-accent)]/50 bg-[var(--color-accent-muted)]'
-                    : 'border-[var(--glass-border)] bg-[var(--glass-bg-dark)] backdrop-blur-xl'
+                    ? 'border-[var(--color-accent)]/45 bg-[linear-gradient(180deg,rgba(149,191,71,0.26),rgba(149,191,71,0.12))]'
+                    : 'border-[var(--glass-border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-xl'
                 }`}
               >
                 <div className="min-w-0">
@@ -373,13 +373,13 @@ export function ChannelChat({
                     </span>
                   )}
 
-                  <p className="break-words text-sm leading-relaxed text-[var(--color-text)] sm:text-[15px]">
+                  <p className="break-words text-[13px] leading-relaxed text-[var(--color-text)] sm:text-[15px]">
                     {m.content || '(Anhang)'}
                   </p>
 
                   {hasAttachment && (
                     <div
-                      className="mt-2 overflow-hidden rounded-2xl border border-[var(--glass-border)]/70"
+                      className="mt-2 overflow-hidden rounded-[1rem] border border-[var(--glass-border)]/70"
                       style={shouldApplyAttachmentBackground(m) ? { backgroundColor: m.attachment_background_color ?? undefined } : undefined}
                     >
                       {(m.attachment_base64 && m.attachment_content_type) ? (
@@ -414,7 +414,7 @@ export function ChannelChat({
                       href={m.button_url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-2 inline-block rounded-xl bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-bg)] hover:bg-[var(--color-accent-hover)]"
+                      className="mt-2 inline-block rounded-xl bg-[var(--color-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--color-bg)] hover:bg-[var(--color-accent-hover)]"
                     >
                       {m.button_text || m.button_url}
                     </a>
@@ -473,7 +473,7 @@ export function ChannelChat({
       </div>
 
       <div
-        className={`mt-3 flex-shrink-0 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] p-3 backdrop-blur-xl transition-colors sm:p-4 ${
+        className={`mt-2 flex-shrink-0 rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)]/95 p-3 shadow-md backdrop-blur-2xl transition-colors sm:mt-3 sm:p-4 ${
           dragActive ? 'bg-[var(--color-accent-muted)] border-[var(--color-accent)]' : ''
         }`}
         onDrop={handleDrop}
@@ -494,8 +494,8 @@ export function ChannelChat({
             <div className="flex flex-wrap items-center gap-2">
               {effectiveCanAttach && (
                 <label className="cursor-pointer">
-                  <span className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-xs font-medium text-[var(--color-text)]">
-                    Datei
+                  <span className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-[11px] font-medium text-[var(--color-text)]">
+                    + Datei
                   </span>
                   <input
                     type="file"
@@ -509,12 +509,30 @@ export function ChannelChat({
               <button
                 type="button"
                 onClick={() => setShowComposerOptions((v) => !v)}
-                className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                className="inline-flex rounded-xl border border-[var(--glass-border)] bg-white/5 px-2.5 py-1.5 text-[11px] font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
               >
                 {showComposerOptions ? 'Optionen aus' : 'Optionen'}
               </button>
 
               {file && <span className="max-w-[170px] truncate text-xs text-[var(--color-text-muted)]">{file.name}</span>}
+              {file && /^image\//.test(file.type) && (
+                <label className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--glass-border)] bg-white/5 px-2 py-1 text-[11px] text-[var(--color-text-muted)]">
+                  <span>BG</span>
+                  <input
+                    type="color"
+                    value={attachmentBg || '#0a0a0a'}
+                    onChange={(e) => setAttachmentBg(e.target.value)}
+                    className="h-5 w-5 cursor-pointer rounded border border-[var(--glass-border)] bg-transparent"
+                  />
+                  <input
+                    type="text"
+                    value={attachmentBg}
+                    onChange={(e) => setAttachmentBg(e.target.value)}
+                    placeholder="#0a0a0a"
+                    className="w-20 rounded border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-1.5 py-0.5 text-[10px] text-[var(--color-text)]"
+                  />
+                </label>
+              )}
             </div>
 
             {filePreviewUrl && (
@@ -541,24 +559,6 @@ export function ChannelChat({
                     className="rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
-                {file && file.type !== 'image/png' && (
-                  <label className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-                    Hintergrund
-                    <input
-                      type="color"
-                      value={attachmentBg || '#0a0a0a'}
-                      onChange={(e) => setAttachmentBg(e.target.value)}
-                      className="h-7 w-7 cursor-pointer rounded-lg border border-[var(--glass-border)] bg-transparent"
-                    />
-                    <input
-                      type="text"
-                      value={attachmentBg}
-                      onChange={(e) => setAttachmentBg(e.target.value)}
-                      placeholder="#0a0a0a"
-                      className="w-24 rounded-lg border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-2 py-1 text-[11px] text-[var(--color-text)]"
-                    />
-                  </label>
-                )}
               </div>
             )}
 
@@ -569,17 +569,17 @@ export function ChannelChat({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={file ? textInputPlaceholderWithFile : textInputPlaceholder}
-                  className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2.5 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
+                  className="flex-1 rounded-2xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2.5 text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                 />
               ) : (
-                <div className="flex-1 rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text-muted)]">
+                <div className="flex-1 rounded-2xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text-muted)]">
                   {file ? 'Nur Bild wird gesendet.' : 'Text ist in diesem Channel deaktiviert.'}
                 </div>
               )}
               <button
                 type="submit"
                 disabled={uploading || (!input.trim() && !file)}
-                className="rounded-xl bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg)] shadow-sm hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
+                className="rounded-2xl bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg)] shadow-sm hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
               >
                 {uploading ? '…' : sendButtonText}
               </button>

@@ -18,6 +18,15 @@ export default async function LoginPage() {
     'login.hint',
     'login.placeholder.license',
     'login.button.submit',
+    'login.badge',
+    'login.hero.title',
+    'login.hero.subtitle',
+    'login.feature.1',
+    'login.feature.2',
+    'login.feature.3',
+    'login.card.eyebrow',
+    'login.card.title',
+    'login.card.subtitle',
   ]);
 
   return (
@@ -29,23 +38,23 @@ export default async function LoginPage() {
         <div className="grid w-full overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] shadow-2xl backdrop-blur-2xl md:grid-cols-2">
           <section className="relative hidden border-r border-[var(--glass-border)] p-8 md:block">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
-              Brospify Hub
+              {uiText(texts, 'login.badge', UI_TEXT_FALLBACKS['login.badge'])}
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-tight text-[var(--color-text)]">
-              Sicherer Zugang fuer dein Team.
+              {uiText(texts, 'login.hero.title', UI_TEXT_FALLBACKS['login.hero.title'])}
             </h1>
             <p className="mt-3 text-sm text-[var(--color-text-muted)]">
-              Lizenzbasierter Login, moderierte Channels, mobile-optimierter Chat und Admin-Steuerung in Echtzeit.
+              {uiText(texts, 'login.hero.subtitle', UI_TEXT_FALLBACKS['login.hero.subtitle'])}
             </p>
             <div className="mt-8 space-y-3">
               <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-3 text-sm text-[var(--color-text)]">
-                Private Mitgliederbereiche mit Rollen
+                {uiText(texts, 'login.feature.1', UI_TEXT_FALLBACKS['login.feature.1'])}
               </div>
               <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-3 text-sm text-[var(--color-text)]">
-                Moderation, Freigaben und Datei-Download
+                {uiText(texts, 'login.feature.2', UI_TEXT_FALLBACKS['login.feature.2'])}
               </div>
               <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-3 text-sm text-[var(--color-text)]">
-                Dynamische Texte und Branding im Admin-CMS
+                {uiText(texts, 'login.feature.3', UI_TEXT_FALLBACKS['login.feature.3'])}
               </div>
             </div>
           </section>
@@ -60,11 +69,13 @@ export default async function LoginPage() {
 
             <div className="mt-6 rounded-3xl border border-[var(--glass-border)] bg-white/5 p-5 sm:p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
-                Login
+                {uiText(texts, 'login.card.eyebrow', UI_TEXT_FALLBACKS['login.card.eyebrow'])}
               </p>
-              <h2 className="mt-2 text-2xl font-bold text-[var(--color-text)]">Willkommen zurueck</h2>
+              <h2 className="mt-2 text-2xl font-bold text-[var(--color-text)]">
+                {uiText(texts, 'login.card.title', UI_TEXT_FALLBACKS['login.card.title'])}
+              </h2>
               <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                Gib deinen Lizenzkey ein, um fortzufahren.
+                {uiText(texts, 'login.card.subtitle', UI_TEXT_FALLBACKS['login.card.subtitle'])}
               </p>
               <div className="mt-5">
                 <LoginForm
