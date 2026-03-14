@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import logoSrc from '@/assets/logo.png';
+/** Logo aus public/logo.png – Next.js serviert es unter /logo.png */
+const LOGO_SRC = '/logo.png';
 
 type Props = {
   className?: string;
@@ -12,7 +13,7 @@ export function AppLogo({
 }: Props) {
   return (
     <img
-      src={typeof logoSrc === 'string' ? logoSrc : logoSrc.src}
+      src={LOGO_SRC}
       alt={alt}
       className={className}
       width={180}
