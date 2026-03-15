@@ -40,7 +40,7 @@ export default async function ChannelPage({
 
   let query = service
     .from('messages')
-    .select('id, content, attachment_url, user_id, created_at, button_text, button_url, attachment_background_color, attachment_base64, attachment_content_type, is_approved')
+    .select('id, content, attachment_url, user_id, created_at, button_text, button_url, attachment_background_color, attachment_base64, attachment_content_type, is_approved, action_buttons, is_winning_product')
     .eq('channel_id', channelId)
     .order('created_at', { ascending: false })
     .limit(INITIAL_PAGE_SIZE + 1);

@@ -20,6 +20,7 @@ export async function saveChannel(
   const sort_order = parseInt((formData.get('sort_order') as string) || '0', 10);
   const cta_text = (formData.get('cta_text') as string)?.trim() || null;
   const cta_url = (formData.get('cta_url') as string)?.trim() || null;
+  const highlight_color = (formData.get('highlight_color') as string)?.trim() || null;
   if (!name) return { ok: false, error: 'Name fehlt.' };
   const payload = {
     name,
@@ -35,6 +36,7 @@ export async function saveChannel(
     history_visible: bool(formData, 'history_visible'),
     cta_text,
     cta_url,
+    highlight_color,
   };
   const supabase = createServiceClient();
   if (id) {

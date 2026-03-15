@@ -6,9 +6,10 @@ import { loginWithLicenseKey } from './actions';
 type Props = {
   placeholderText: string;
   submitText: string;
+  inputLabelText: string;
 };
 
-export function LoginForm({ placeholderText, submitText }: Props) {
+export function LoginForm({ placeholderText, submitText, inputLabelText }: Props) {
   const [state, formAction] = useActionState(loginWithLicenseKey, { error: '' });
 
   return (
@@ -19,7 +20,7 @@ export function LoginForm({ placeholderText, submitText }: Props) {
         </p>
       )}
       <label className="block">
-        <span className="sr-only">Lizenzkey</span>
+        <span className="sr-only">{inputLabelText}</span>
         <input
           type="text"
           name="license_key"
@@ -31,7 +32,7 @@ export function LoginForm({ placeholderText, submitText }: Props) {
       </label>
       <button
         type="submit"
-        className="w-full rounded-2xl bg-[var(--color-accent)] px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-bg)] shadow-md hover:bg-[var(--color-accent-hover)] transition-colors"
+        className="w-full rounded-2xl bg-[var(--color-accent)] px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-bg)] shadow-md transition-colors duration-300 ease-out hover:bg-[var(--color-accent-hover)]"
       >
         {submitText}
       </button>

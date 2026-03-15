@@ -24,7 +24,7 @@ export default async function ChannelLayout({
     .order('sort_order');
   const { data: channels } = await supabase
     .from('channels')
-    .select('id, name, category_id')
+    .select('id, name, category_id, highlight_color')
     .order('sort_order');
 
   const byCategory = (categories ?? []).map((cat) => ({

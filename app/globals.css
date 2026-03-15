@@ -39,6 +39,7 @@ body {
   min-height: 100dvh;
   background: var(--color-bg);
   font-feature-settings: 'rlig' 1, 'calt' 1;
+  overscroll-behavior-y: none;
 }
 
 /* PWA safe area (Notch, Home Indicator) */
@@ -52,6 +53,8 @@ body {
 a, button, [type="button"], [type="submit"], [type="reset"],
 input:not([type="checkbox"]):not([type="radio"]), textarea, select {
   transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* Focus-Ring für Accessibility */
@@ -75,6 +78,24 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   box-shadow: var(--shadow-md);
 }
 
+.surface-card {
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-dark);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.interactive-card {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out, background-color 0.3s ease-out;
+}
+
+.interactive-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.33);
+}
+
 .mesh-hero {
   position: relative;
   overflow: hidden;
@@ -92,4 +113,28 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.ios-momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
 }

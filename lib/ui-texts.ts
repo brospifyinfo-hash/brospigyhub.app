@@ -7,6 +7,7 @@ export const UI_TEXT_FALLBACKS = {
   'home.cta.secondary': 'Direkt zum Dashboard ->',
   'login.back': '<- Zurueck',
   'login.hint': 'Noch kein Key? Kontaktiere den Administrator.',
+  'login.input.label': 'Lizenzkey',
   'login.placeholder.license': 'Lizenzkey',
   'login.button.submit': 'Anmelden',
   'login.badge': 'Brospify Hub',

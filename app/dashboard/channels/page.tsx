@@ -18,8 +18,15 @@ export default async function ChannelsOverviewPage() {
 
   const { data: channels } = await supabase
     .from('channels')
-    .select('id, name, category_id')
+    .select('id, name, category_id, highlight_color')
     .order('sort_order');
+
+  const safeHighlight = (value: string | null | undefined): string | undefined => {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(trimmed)) return trimmed;
+    return undefined;
+  };
 
   const byCategory = (categories ?? []).map((cat) => ({
     ...cat,
@@ -48,7 +55,12 @@ export default async function ChannelsOverviewPage() {
                 <Link
                   key={ch.id}
                   href={`/dashboard/channels/${ch.id}`}
-                  className="block p-5 rounded-2xl glass-panel shadow-md card-hover border border-[var(--glass-border)]"
+                  className="interactive-card block rounded-2xl border border-[var(--glass-border)] p-5 shadow-md card-hover surface-card"
+                  style={
+                    safeHighlight(ch.highlight_color)
+                      ? { boxShadow: `0 12px 30px -20px ${safeHighlight(ch.highlight_color)}99, inset 0 0 0 1px ${safeHighlight(ch.highlight_color)}55` }
+                      : undefined
+                  }
                 >
                   <span className="font-medium text-[var(--color-text)]">{ch.name}</span>
                 </Link>
@@ -66,7 +78,12 @@ export default async function ChannelsOverviewPage() {
                 <Link
                   key={ch.id}
                   href={`/dashboard/channels/${ch.id}`}
-                  className="block p-5 rounded-2xl glass-panel shadow-md card-hover border border-[var(--glass-border)]"
+                  className="interactive-card block rounded-2xl border border-[var(--glass-border)] p-5 shadow-md card-hover surface-card"
+                  style={
+                    safeHighlight(ch.highlight_color)
+                      ? { boxShadow: `0 12px 30px -20px ${safeHighlight(ch.highlight_color)}99, inset 0 0 0 1px ${safeHighlight(ch.highlight_color)}55` }
+                      : undefined
+                  }
                 >
                   <span className="font-medium text-[var(--color-text)]">{ch.name}</span>
                 </Link>

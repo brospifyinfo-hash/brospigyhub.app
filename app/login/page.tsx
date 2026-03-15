@@ -18,6 +18,7 @@ export default async function LoginPage() {
   const texts = await getUiTexts([
     'header.logo_url',
     'login.back',
+    'login.input.label',
     'login.hint',
     'login.placeholder.license',
     'login.button.submit',
@@ -37,7 +38,7 @@ export default async function LoginPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[var(--color-bg)] px-4 pt-20 pb-8 sm:px-6 sm:pt-24 sm:pb-10">
-      <LoginHeader />
+      <LoginHeader backText={uiText(texts, 'login.back', UI_TEXT_FALLBACKS['login.back'])} />
       <div className="pointer-events-none absolute -left-32 top-0 h-80 w-80 rounded-full bg-[var(--color-accent)]/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
 
@@ -98,6 +99,11 @@ export default async function LoginPage() {
                     UI_TEXT_FALLBACKS['login.placeholder.license']
                   )}
                   submitText={uiText(texts, 'login.button.submit', UI_TEXT_FALLBACKS['login.button.submit'])}
+                  inputLabelText={uiText(
+                    texts,
+                    'login.input.label',
+                    UI_TEXT_FALLBACKS['login.input.label']
+                  )}
                 />
               </div>
             </div>

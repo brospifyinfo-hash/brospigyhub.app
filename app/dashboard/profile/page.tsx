@@ -35,7 +35,7 @@ export default async function ProfilePage() {
           {uiText(texts, 'profile.subtitle', UI_TEXT_FALLBACKS['profile.subtitle'])}
         </p>
       </div>
-      <div className="p-6 rounded-2xl glass-panel border border-[var(--glass-border)] shadow-md space-y-4">
+      <div className="surface-card interactive-card space-y-4 rounded-2xl p-6">
         <div>
           <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
             E-Mail
@@ -51,13 +51,13 @@ export default async function ProfilePage() {
           </p>
         </div>
       </div>
-      <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
+      <div className="interactive-card rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
         <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
           Lizenzkey
         </p>
         <p className="mt-1 text-[var(--color-text)]">{maskLicenseKey(keyRow?.key_value ?? null)}</p>
       </div>
-      <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
+      <div className="interactive-card rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
         <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
           Beitrittsdatum
         </p>
@@ -65,7 +65,7 @@ export default async function ProfilePage() {
           {new Date(keyRow?.created_at ?? user.created_at).toLocaleDateString('de-DE')}
         </p>
       </div>
-      <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
+      <div className="interactive-card rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm">
         <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
           Kommende Einstellungen
         </p>

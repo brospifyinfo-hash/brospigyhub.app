@@ -41,7 +41,7 @@ export default async function AdminProtectedLayout({
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <header className="mx-auto max-w-6xl p-4 sm:p-6">
-        <div className="rounded-3xl glass-panel border border-[var(--glass-border)] p-4 shadow-md">
+        <div className="surface-card rounded-3xl p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Link href="/admin" className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export default async function AdminProtectedLayout({
               </Link>
               <Link
                 href="/dashboard"
-                className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)]"
+                className="text-sm text-[var(--color-text-muted)] transition-colors duration-300 ease-out hover:text-[var(--color-accent)]"
               >
                 ← Zum Hub
               </Link>
@@ -60,7 +60,7 @@ export default async function AdminProtectedLayout({
             <form action="/admin/logout" method="post">
               <button
                 type="submit"
-                className="rounded-2xl px-3 py-2 text-sm text-[var(--color-text-muted)] hover:bg-red-500/10 hover:text-red-400"
+                className="rounded-2xl px-3 py-2 text-sm text-[var(--color-text-muted)] transition-colors duration-300 ease-out hover:bg-red-500/10 hover:text-red-400"
               >
                 Admin abmelden
               </button>
@@ -71,7 +71,7 @@ export default async function AdminProtectedLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-2xl px-3 py-2 text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-accent-muted)] hover:text-[var(--color-text)]"
+                className="rounded-2xl px-3 py-2 text-sm text-[var(--color-text-muted)] transition-colors duration-300 ease-out hover:bg-[var(--color-accent-muted)] hover:text-[var(--color-text)]"
               >
                 {item.label}
               </Link>
@@ -79,7 +79,9 @@ export default async function AdminProtectedLayout({
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+        <div className="surface-card rounded-3xl p-4 sm:p-6">{children}</div>
+      </main>
     </div>
   );
 }

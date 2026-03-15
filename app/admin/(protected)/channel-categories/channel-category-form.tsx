@@ -15,7 +15,7 @@ export function ChannelCategoryForm({
   const [state, formAction] = useActionState(saveChannelCategory, { ok: false, error: '' });
 
   return (
-    <div className="flex flex-wrap items-end gap-3">
+    <div className="surface-card flex flex-wrap items-end gap-3 rounded-2xl p-3">
       <form action={formAction} className="flex flex-wrap items-end gap-2">
         {editId && <input type="hidden" name="id" value={editId} />}
         <input
@@ -34,7 +34,7 @@ export function ChannelCategoryForm({
         />
         <button
           type="submit"
-          className="px-3 py-2 bg-[var(--color-accent)] text-[var(--color-bg)] font-semibold rounded-xl hover:bg-[var(--color-accent-hover)] text-sm"
+          className="min-h-[40px] rounded-xl bg-[var(--color-accent)] px-3 py-2 text-sm font-semibold text-[var(--color-bg)] transition-colors duration-300 ease-out hover:bg-[var(--color-accent-hover)]"
         >
           {editId ? 'Speichern' : 'Hinzufügen'}
         </button>
@@ -43,7 +43,7 @@ export function ChannelCategoryForm({
         <form action={deleteChannelCategory.bind(null, editId)}>
           <button
             type="submit"
-            className="px-3 py-2 border border-red-500/50 text-red-400 rounded-xl hover:bg-red-500/10 text-sm"
+            className="min-h-[40px] rounded-xl border border-red-500/50 px-3 py-2 text-sm text-red-400 transition-colors duration-300 ease-out hover:bg-red-500/10"
           >
             Löschen
           </button>

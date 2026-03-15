@@ -25,6 +25,7 @@ export function ChannelForm({
     history_visible: boolean;
     cta_text: string | null;
     cta_url: string | null;
+    highlight_color: string | null;
   };
 }) {
   const [state, formAction] = useActionState(saveChannel, { ok: false, error: '' });
@@ -33,7 +34,7 @@ export function ChannelForm({
     'px-4 py-2.5 rounded-2xl bg-[var(--color-bg)] border border-[var(--glass-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none';
 
   return (
-    <form action={formAction} className="space-y-5 max-w-xl">
+    <form action={formAction} className="surface-card max-w-xl space-y-5 rounded-3xl p-4 sm:p-5">
       {edit && <input type="hidden" name="id" value={edit.id} />}
       <div className="flex gap-3 flex-wrap">
         <input
@@ -60,6 +61,13 @@ export function ChannelForm({
           defaultValue={edit?.sort_order ?? 0}
           placeholder="Reihe"
           className={`${inputClass} w-20`}
+        />
+        <input
+          type="text"
+          name="highlight_color"
+          defaultValue={edit?.highlight_color ?? ''}
+          placeholder="Highlight (z.B. #f5c542)"
+          className={`${inputClass} min-w-[180px]`}
         />
       </div>
       <div className="flex flex-wrap gap-4 text-sm">
@@ -119,7 +127,7 @@ export function ChannelForm({
       )}
       <button
         type="submit"
-        className="px-5 py-2.5 rounded-2xl bg-[var(--color-accent)] text-[var(--color-bg)] font-semibold shadow-md hover:bg-[var(--color-accent-hover)]"
+        className="min-h-[42px] rounded-2xl bg-[var(--color-accent)] px-5 py-2.5 font-semibold text-[var(--color-bg)] shadow-md transition-colors duration-300 ease-out hover:bg-[var(--color-accent-hover)]"
       >
         {edit ? 'Speichern' : 'Channel anlegen'}
       </button>

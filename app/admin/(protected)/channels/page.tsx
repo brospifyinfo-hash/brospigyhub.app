@@ -8,7 +8,7 @@ export default async function AdminChannelsPage() {
   const supabase = createServiceClient();
   const { data: channels } = await supabase
     .from('channels')
-    .select('id, name, sort_order, allow_text, allow_images, allow_user_images, show_download_button, show_copy_button, cta_text, cta_url, channel_categories(name)')
+    .select('id, name, sort_order, highlight_color, allow_text, allow_images, allow_user_images, show_download_button, show_copy_button, cta_text, cta_url, channel_categories(name)')
     .order('sort_order');
   const { data: categories } = await supabase
     .from('channel_categories')
@@ -31,13 +31,25 @@ export default async function AdminChannelsPage() {
           {(channels ?? []).map((ch) => (
             <div
               key={ch.id}
-              className="flex items-center justify-between p-5 rounded-2xl glass-panel border border-[var(--glass-border)] shadow-md"
+              className="flex flex-col gap-3 rounded-2xl border border-[var(--glass-border)] p-4 shadow-md glass-panel sm:flex-row sm:items-center sm:justify-between sm:p-5"
             >
               <div>
                 <span className="font-medium text-[var(--color-text)]">{ch.name}</span>
                 <span className="text-[var(--color-text-muted)] text-sm ml-2">
                   {(ch.channel_categories as { name?: string })?.name ?? '—'} · Reihenfolge {ch.sort_order}
                 </span>
+                {ch.highlight_color && (
+                  <span
+                    className="ml-2 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold"
+                    style={{
+                      borderColor: `${ch.highlight_color}88`,
+                      backgroundColor: `${ch.highlight_color}22`,
+                      color: ch.highlight_color,
+                    }}
+                  >
+                    Highlight
+                  </span>
+                )}
                 <div className="flex flex-wrap gap-2 mt-1 text-xs text-[var(--color-text-muted)]">
                   {ch.allow_text && <span>Text</span>}
                   {ch.allow_images && <span>Bilder</span>}
@@ -49,7 +61,7 @@ export default async function AdminChannelsPage() {
               </div>
               <Link
                 href={`/admin/channels/${ch.id}`}
-                className="px-4 py-2 rounded-xl bg-[var(--color-accent)] text-[var(--color-bg)] font-semibold hover:bg-[var(--color-accent-hover)] text-sm shadow-sm"
+                className="inline-flex min-h-[40px] touch-manipulation items-center justify-center self-start rounded-xl bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)] shadow-sm transition-colors duration-300 ease-out hover:bg-[var(--color-accent-hover)] sm:self-auto"
               >
                 Bearbeiten
               </Link>
