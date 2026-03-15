@@ -36,8 +36,16 @@ html {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-bg);
   font-feature-settings: 'rlig' 1, 'calt' 1;
+}
+
+/* PWA safe area (Notch, Home Indicator) */
+.safe-area-padding {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Nur für interaktive Elemente: kurze, dezente Übergänge */

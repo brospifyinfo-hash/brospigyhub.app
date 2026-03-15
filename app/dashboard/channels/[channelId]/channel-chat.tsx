@@ -317,23 +317,23 @@ export function ChannelChat({
   }
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)]/80 shadow-2xl backdrop-blur-2xl">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(140%_90%_at_0%_0%,rgba(149,191,71,0.24),transparent_60%),radial-gradient(130%_90%_at_100%_0%,rgba(86,129,255,0.22),transparent_62%)]" />
+    <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[var(--glass-bg-dark)]/95 md:rounded-3xl md:border md:border-[var(--glass-border)] md:shadow-2xl backdrop-blur-2xl rounded-none border-0 md:mx-2 md:mt-2 md:mb-2">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 md:h-48 bg-[radial-gradient(140%_90%_at_0%_0%,rgba(149,191,71,0.24),transparent_60%),radial-gradient(130%_90%_at_100%_0%,rgba(86,129,255,0.22),transparent_62%)]" />
 
-      <header className="relative z-10 mx-2 mt-2 flex-shrink-0 rounded-3xl border border-[var(--glass-border)] bg-black/35 px-4 py-3 shadow-md backdrop-blur-xl sm:mx-3 sm:mt-3 sm:px-5">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">Channel</p>
-            <h2 className="truncate text-base font-bold text-[var(--color-text)]">{channelName}</h2>
+      <header className="relative z-10 flex-shrink-0 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3 md:mx-2 md:mt-2 md:rounded-3xl md:border md:border-[var(--glass-border)] md:bg-black/35 md:px-5 md:py-3 md:shadow-md backdrop-blur-xl border-b border-[var(--glass-border)] md:border-b-0 md:mx-3 bg-[var(--color-bg)]/80">
+        <div className="flex items-center justify-between gap-3 pl-10 md:pl-0">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">Channel</p>
+            <h2 className="truncate text-lg md:text-base font-bold text-[var(--color-text)]">{channelName}</h2>
           </div>
-          <span className="inline-flex h-7 items-center rounded-full border border-[var(--color-accent)]/35 bg-[var(--color-accent-muted)] px-2.5 text-[11px] font-semibold text-[var(--color-accent)]">
+          <span className="inline-flex h-8 items-center rounded-full border border-[var(--color-accent)]/35 bg-[var(--color-accent-muted)] px-3 text-[11px] font-semibold text-[var(--color-accent)] shrink-0">
             Live
           </span>
         </div>
       </header>
 
       {(ctaText || ctaUrl) && (
-        <div className="relative z-10 mx-2 mt-2 flex-shrink-0 rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-2.5 sm:mx-3">
+        <div className="relative z-10 flex-shrink-0 mx-2 mt-2 rounded-2xl border border-[var(--glass-border)] bg-white/5 px-4 py-2.5 sm:mx-3 md:mx-3">
           {ctaUrl ? (
             <a href={ctaUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-[var(--color-accent)] hover:underline">
               {ctaText || ctaUrl}
@@ -344,7 +344,7 @@ export function ChannelChat({
         </div>
       )}
 
-      <div className="scrollbar-hide relative z-10 min-h-0 flex-1 overflow-y-auto px-2 pb-4 pt-2 sm:px-3">
+      <div className="scrollbar-hide relative z-10 min-h-0 flex-1 overflow-y-auto px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 md:px-3 md:pb-4">
         <div className="space-y-3 sm:space-y-4">
           {hasMore && (
             <div className="flex justify-center py-1">
@@ -487,7 +487,7 @@ export function ChannelChat({
       </div>
 
       <div
-        className={`relative z-20 m-2 mt-1 flex-shrink-0 rounded-3xl border border-[var(--glass-border)] bg-black/40 p-3 shadow-xl backdrop-blur-2xl transition-colors sm:m-3 sm:p-4 ${
+        className={`relative z-20 flex-shrink-0 mx-2 mt-1 mb-2 rounded-2xl border border-[var(--glass-border)] bg-black/40 p-3 shadow-xl backdrop-blur-2xl transition-colors md:mx-3 md:m-3 md:rounded-3xl md:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] ${
           dragActive ? 'border-[var(--color-accent)] bg-[var(--color-accent-muted)]/40' : ''
         }`}
         onDrop={handleDrop}

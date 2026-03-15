@@ -67,7 +67,7 @@ export function ChannelsDirectory({
         <p className="mt-1 text-[var(--color-text-muted)]">{subtitle}</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:gap-3">
         {sorted.map((channel) => {
           const isVirtualNotification = channel.id === '__notification__';
           const lastReadAt = readMap[channel.id] ?? null;
@@ -76,15 +76,15 @@ export function ChannelsDirectory({
               (!lastReadAt || new Date(channel.latestMessageAt).getTime() > new Date(lastReadAt).getTime())
           );
           const card = (
-            <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 shadow-sm transition-colors hover:bg-white/10">
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate font-medium text-[var(--color-text)]">{channel.name}</p>
+            <div className="rounded-2xl border border-[var(--glass-border)] bg-white/5 p-4 sm:p-4 py-4 px-4 min-h-[56px] flex items-center shadow-sm transition-colors hover:bg-white/10 active:bg-white/15">
+              <div className="flex items-center justify-between gap-3 w-full min-w-0">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-[var(--color-text)] text-[15px]">{channel.name}</p>
                 </div>
                 {isUnread && (
                   <span
                     aria-label="Ungelesene Nachrichten"
-                    className="h-3 w-3 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,0.8)]"
+                    className="h-3 w-3 rounded-full bg-blue-400 animate-pulse shadow-[0_0_10px_rgba(96,165,250,0.8)] shrink-0"
                   />
                 )}
               </div>
