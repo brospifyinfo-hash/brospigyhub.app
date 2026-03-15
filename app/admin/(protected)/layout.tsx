@@ -45,7 +45,7 @@ export default async function AdminProtectedLayout({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Link href="/admin" className="flex items-center gap-2">
-                <AppLogo logoUrl={logoUrl} className="h-20 w-auto object-contain sm:h-24" />
+                <AppLogo logoUrl={logoUrl} className="h-8 w-auto object-contain" />
                 <span className="font-semibold text-[var(--color-accent)] text-lg">
                   Brospify Admin
                 </span>

@@ -6,10 +6,10 @@ type Props = {
   alt?: string;
 };
 
-/** Logo sehr groß: h-28 bis h-32 */
+/** Logo klein: h-9 Standard */
 export function AppLogo({
   logoUrl,
-  className = 'h-28 w-auto object-contain sm:h-32',
+  className = 'h-9 w-auto object-contain',
   alt = 'Logo',
 }: Props) {
   if (!logoUrl || !logoUrl.trim()) {
@@ -24,8 +24,8 @@ export function AppLogo({
       src={logoUrl.trim()}
       alt={alt}
       className={className}
-      width={320}
-      height={128}
+      width={120}
+      height={36}
       loading="eager"
     />
   );

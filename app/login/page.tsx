@@ -45,7 +45,7 @@ export default async function LoginPage() {
         <div className="grid w-full overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] shadow-2xl backdrop-blur-2xl md:grid-cols-2">
           <section className="relative hidden border-r border-[var(--glass-border)] p-8 md:block">
             <div className="mb-6 flex justify-center md:flex">
-              <AppLogo logoUrl={logoUrl} className="h-24 w-auto object-contain sm:h-28" />
+              <AppLogo logoUrl={logoUrl} className="h-12 w-auto object-contain sm:h-14" />
             </div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
               {uiText(texts, 'login.badge', UI_TEXT_FALLBACKS['login.badge'])}
@@ -71,7 +71,7 @@ export default async function LoginPage() {
 
           <section className="p-6 sm:p-8 md:p-10">
             <div className="mb-6 flex justify-center md:hidden">
-              <AppLogo logoUrl={logoUrl} className="h-20 w-auto object-contain" />
+              <AppLogo logoUrl={logoUrl} className="h-10 w-auto object-contain" />
             </div>
             <Link
               href="/"

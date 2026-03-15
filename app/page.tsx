@@ -20,7 +20,7 @@ export default async function HomePage() {
         <div className="mb-6 flex justify-center">
           <AppLogo
             logoUrl={logoUrl}
-            className="h-32 w-auto object-contain sm:h-40"
+            className="h-16 w-auto object-contain sm:h-20"
           />
         </div>
         <p className="text-[var(--color-text-muted)] text-lg mb-10">
