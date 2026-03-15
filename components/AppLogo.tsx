@@ -1,27 +1,31 @@
 /* eslint-disable @next/next/no-img-element */
-import logoSrc from '@/assets/logo.png';
-
-const FALLBACK_SRC = typeof logoSrc === 'string' ? logoSrc : (logoSrc as { src: string }).src;
 
 type Props = {
-  logoUrl?: string | null;
+  logoUrl: string | null;
   className?: string;
   alt?: string;
 };
 
+/** Logo sehr groß: h-28 bis h-32 */
 export function AppLogo({
   logoUrl,
-  className = 'h-14 w-auto object-contain sm:h-16',
+  className = 'h-28 w-auto object-contain sm:h-32',
   alt = 'Logo',
 }: Props) {
-  const src = (typeof logoUrl === 'string' && logoUrl.trim()) ? logoUrl.trim() : FALLBACK_SRC;
+  if (!logoUrl || !logoUrl.trim()) {
+    return (
+      <span className="text-lg font-semibold text-[var(--color-text)]">
+        Brospify Hub
+      </span>
+    );
+  }
   return (
     <img
-      src={src}
+      src={logoUrl.trim()}
       alt={alt}
       className={className}
-      width={180}
-      height={64}
+      width={320}
+      height={128}
       loading="eager"
     />
   );

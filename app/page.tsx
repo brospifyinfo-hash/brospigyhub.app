@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getUiTexts, uiText, UI_TEXT_FALLBACKS } from '@/lib/ui-texts';
-import { LoginHeader } from '@/app/login/login-header';
+import { AppLogo } from '@/components/AppLogo';
 
 export default async function HomePage() {
   const texts = await getUiTexts([
@@ -15,12 +15,14 @@ export default async function HomePage() {
     : null;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 pt-24 bg-[var(--color-bg)]">
-      <LoginHeader logoUrl={logoUrl} />
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-[var(--color-bg)]">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-[var(--color-text)] mb-3">
-          {uiText(texts, 'home.title', UI_TEXT_FALLBACKS['home.title'])}
-        </h1>
+        <div className="mb-6 flex justify-center">
+          <AppLogo
+            logoUrl={logoUrl}
+            className="h-32 w-auto object-contain sm:h-40"
+          />
+        </div>
         <p className="text-[var(--color-text-muted)] text-lg mb-10">
           {uiText(texts, 'home.subtitle', UI_TEXT_FALLBACKS['home.subtitle'])}
         </p>

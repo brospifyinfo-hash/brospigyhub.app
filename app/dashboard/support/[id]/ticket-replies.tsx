@@ -28,8 +28,8 @@ export function TicketReplies({
           table: 'ticket_replies',
           filter: `ticket_id=eq.${ticketId}`,
         },
-        (payload) => {
-          const row = payload.new as { id: string; body: string; is_staff: boolean; created_at: string };
+        (payload: { new: { id: string; body: string; is_staff: boolean; created_at: string } }) => {
+          const row = payload.new;
           setReplies((prev) => [...prev, { id: row.id, body: row.body, is_staff: row.is_staff, created_at: row.created_at }]);
         }
       )

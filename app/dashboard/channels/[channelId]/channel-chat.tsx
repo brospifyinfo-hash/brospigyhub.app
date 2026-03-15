@@ -116,8 +116,8 @@ export function ChannelChat({
           table: 'messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
-          const row = payload.new as Record<string, unknown>;
+        (payload: { new: Record<string, unknown> }) => {
+          const row = payload.new;
           const newMsg = mapRowToMessage(row);
           if (!isPrivileged && !newMsg.is_approved) return;
           setMessages((prev) => {
@@ -141,8 +141,8 @@ export function ChannelChat({
           table: 'messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
-          const row = payload.new as Record<string, unknown>;
+        (payload: { new: Record<string, unknown> }) => {
+          const row = payload.new;
           const updated = mapRowToMessage(row);
           setMessages((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
         }
@@ -155,8 +155,8 @@ export function ChannelChat({
           table: 'messages',
           filter: `channel_id=eq.${channelId}`,
         },
-        (payload) => {
-          const old = payload.old as Record<string, unknown>;
+        (payload: { old: Record<string, unknown> }) => {
+          const old = payload.old;
           const id = old?.id as string | undefined;
           if (id) setMessages((prev) => prev.filter((m) => m.id !== id));
         }

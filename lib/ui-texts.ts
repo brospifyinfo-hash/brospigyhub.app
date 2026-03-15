@@ -35,19 +35,23 @@ export const UI_TEXT_FALLBACKS = {
 export type UiTextsMap = Record<string, string>;
 
 export async function getUiTexts(keys?: string[]): Promise<UiTextsMap> {
-  const service = createServiceClient();
-  let query = service.from('ui_texts').select('key, value');
-  if (keys && keys.length > 0) {
-    query = query.in('key', keys);
-  }
-  const { data } = await query;
-  const map: UiTextsMap = {};
-  for (const row of data ?? []) {
-    if (row.key && typeof row.value === 'string') {
-      map[row.key] = row.value;
+  try {
+    const service = createServiceClient();
+    let query = service.from('ui_texts').select('key, value');
+    if (keys && keys.length > 0) {
+      query = query.in('key', keys);
     }
+    const { data } = await query;
+    const map: UiTextsMap = {};
+    for (const row of data ?? []) {
+      if (row.key && typeof row.value === 'string') {
+        map[row.key] = row.value;
+      }
+    }
+    return map;
+  } catch {
+    return {};
   }
-  return map;
 }
 
 export function uiText(texts: UiTextsMap, key: string, fallback: string): string {

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { LoginForm } from './login-form';
 import { LoginHeader } from './login-header';
+import { AppLogo } from '@/components/AppLogo';
 import { isAdminSession } from '@/lib/admin-auth';
 import { getUiTexts, uiText, UI_TEXT_FALLBACKS } from '@/lib/ui-texts';
 
@@ -36,13 +37,16 @@ export default async function LoginPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[var(--color-bg)] px-4 pt-20 pb-8 sm:px-6 sm:pt-24 sm:pb-10">
-      <LoginHeader logoUrl={logoUrl} />
+      <LoginHeader />
       <div className="pointer-events-none absolute -left-32 top-0 h-80 w-80 rounded-full bg-[var(--color-accent)]/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
 
       <div className="mx-auto flex w-full max-w-5xl items-center justify-center">
         <div className="grid w-full overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] shadow-2xl backdrop-blur-2xl md:grid-cols-2">
           <section className="relative hidden border-r border-[var(--glass-border)] p-8 md:block">
+            <div className="mb-6 flex justify-center md:flex">
+              <AppLogo logoUrl={logoUrl} className="h-24 w-auto object-contain sm:h-28" />
+            </div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text-muted)]">
               {uiText(texts, 'login.badge', UI_TEXT_FALLBACKS['login.badge'])}
             </p>
@@ -66,6 +70,9 @@ export default async function LoginPage() {
           </section>
 
           <section className="p-6 sm:p-8 md:p-10">
+            <div className="mb-6 flex justify-center md:hidden">
+              <AppLogo logoUrl={logoUrl} className="h-20 w-auto object-contain" />
+            </div>
             <Link
               href="/"
               className="inline-block text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)]"

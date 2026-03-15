@@ -17,13 +17,18 @@ function storageKey(channelId: string): string {
 }
 
 function computeUnreadCount(list: ChannelLatest[]): number {
+  if (typeof window === 'undefined') return 0;
   let unread = 0;
-  for (const item of list) {
-    if (!item.latestMessageAt) continue;
-    const lastRead = window.localStorage.getItem(storageKey(item.channelId));
-    if (!lastRead || new Date(item.latestMessageAt).getTime() > new Date(lastRead).getTime()) {
-      unread += 1;
+  try {
+    for (const item of list) {
+      if (!item.latestMessageAt) continue;
+      const lastRead = window.localStorage.getItem(storageKey(item.channelId));
+      if (!lastRead || new Date(item.latestMessageAt).getTime() > new Date(lastRead).getTime()) {
+        unread += 1;
+      }
     }
+  } catch {
+    return 0;
   }
   return unread;
 }
@@ -52,35 +57,39 @@ export function NewMessagesStat({ initialLatestByChannel }: Props) {
   }, [latestByChannel]);
 
   useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase
-      .channel('dashboard-new-messages')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-          const row = payload.new as Record<string, unknown>;
-          const channelId = row.channel_id as string | undefined;
-          const createdAt = row.created_at as string | undefined;
-          if (!channelId || !createdAt) return;
-          if (!channelIdSet.has(channelId)) return;
+    try {
+      const supabase = createClient();
+      const channel = supabase
+        .channel('dashboard-new-messages')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload: { new: Record<string, unknown> }) => {
+          const row = payload.new;
+            const channelId = row.channel_id as string | undefined;
+            const createdAt = row.created_at as string | undefined;
+            if (!channelId || !createdAt) return;
+            if (!channelIdSet.has(channelId)) return;
 
-          setLatestByChannel((prev) =>
-            prev.map((item) => {
-              if (item.channelId !== channelId) return item;
-              if (!item.latestMessageAt) return { ...item, latestMessageAt: createdAt };
-              return new Date(createdAt).getTime() > new Date(item.latestMessageAt).getTime()
-                ? { ...item, latestMessageAt: createdAt }
-                : item;
-            })
-          );
-        }
-      )
-      .subscribe();
+            setLatestByChannel((prev) =>
+              prev.map((item) => {
+                if (item.channelId !== channelId) return item;
+                if (!item.latestMessageAt) return { ...item, latestMessageAt: createdAt };
+                return new Date(createdAt).getTime() > new Date(item.latestMessageAt).getTime()
+                  ? { ...item, latestMessageAt: createdAt }
+                  : item;
+              })
+            );
+          }
+        )
+        .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } catch {
+      return () => {};
+    }
   }, [channelIdSet]);
 
   return (
