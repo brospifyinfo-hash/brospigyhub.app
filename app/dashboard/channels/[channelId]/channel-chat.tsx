@@ -113,12 +113,6 @@ export function ChannelChat({
     };
   }, [filePreviewUrl]);
 
-  useEffect(() => {
-    return () => {
-      if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
-    };
-  }, [filePreviewUrl]);
-
   function mapRowToMessage(row: Record<string, unknown>): Message {
     return {
       id: row.id as string,
@@ -522,12 +516,26 @@ export function ChannelChat({
     setActionButtons((prev) => prev.filter((item) => item.id !== id));
   }
 
+  function openChannelMenu() {
+    window.dispatchEvent(new Event('brospify:open-chat-menu'));
+  }
+
   return (
     <div className="relative flex h-full min-h-0 flex-col overflow-hidden bg-[var(--glass-bg-dark)]/95 md:rounded-3xl md:border md:border-[var(--glass-border)] md:shadow-2xl backdrop-blur-2xl rounded-none border-0 md:mx-2 md:mt-2 md:mb-2">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 md:h-48 bg-[radial-gradient(140%_90%_at_0%_0%,rgba(149,191,71,0.24),transparent_60%),radial-gradient(130%_90%_at_100%_0%,rgba(86,129,255,0.22),transparent_62%)]" />
 
       <header className="relative z-10 flex-shrink-0 px-3 pt-[max(1rem,env(safe-area-inset-top))] pb-3 md:mx-2 md:mt-2 md:rounded-3xl md:border md:border-[var(--glass-border)] md:bg-black/35 md:px-5 md:py-3 md:shadow-md backdrop-blur-xl border-b border-[var(--glass-border)] md:border-b-0 md:mx-3 bg-[var(--color-bg)]/80">
-        <div className="flex items-center justify-between gap-2 pl-[5.5rem] md:pl-0">
+        <div className="mb-2 flex md:hidden">
+          <button
+            type="button"
+            onClick={openChannelMenu}
+            className="inline-flex min-h-[40px] touch-manipulation items-center gap-1.5 rounded-xl border border-[var(--glass-border)] bg-white/10 px-3 py-1.5 text-xs font-semibold text-[var(--color-text)]"
+          >
+            <span aria-hidden>≡</span>
+            <span>Menü</span>
+          </button>
+        </div>
+        <div className="flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
             <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">Channel</p>
             <h2 className="truncate text-base font-bold text-[var(--color-text)] md:text-base">{channelName}</h2>
@@ -816,7 +824,7 @@ export function ChannelChat({
             )}
 
             {showComposerOptions && (
-              <div className="space-y-2 rounded-2xl border border-[var(--glass-border)] bg-white/5 p-2.5">
+              <div className="space-y-2.5 rounded-2xl border border-[var(--glass-border)] bg-white/5 p-3">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <input
                     type="text"
@@ -834,7 +842,7 @@ export function ChannelChat({
                   />
                 </div>
                 {isPrivileged && (
-                  <div className="space-y-2 rounded-xl border border-[var(--glass-border)] bg-black/20 p-2.5">
+                  <div className="space-y-3 rounded-xl border border-[var(--glass-border)] bg-black/20 p-3">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                         Action Buttons
@@ -852,8 +860,9 @@ export function ChannelChat({
                         Füge Buttons mit Secret, Timer und Style-Preset hinzu.
                       </p>
                     )}
+                    <div className="scrollbar-hide ios-momentum-scroll max-h-[46dvh] space-y-3 overflow-y-auto pr-1">
                     {actionButtons.map((action, idx) => (
-                      <div key={action.id} className="space-y-2 rounded-xl border border-[var(--glass-border)] bg-white/5 p-2.5">
+                      <div key={action.id} className="space-y-3 rounded-xl border border-[var(--glass-border)] bg-white/5 p-3">
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-[11px] font-medium text-[var(--color-text)]">Button {idx + 1}</p>
                           <button
@@ -864,7 +873,7 @@ export function ChannelChat({
                             Entfernen
                           </button>
                         </div>
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                           <input
                             type="text"
                             value={action.label}
@@ -902,7 +911,7 @@ export function ChannelChat({
                             className="rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/80 px-3 py-2 text-xs text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none sm:col-span-2"
                           />
                         </div>
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                           <label className="flex items-center justify-between rounded-xl border border-[var(--glass-border)] bg-[var(--color-bg)]/65 px-3 py-2">
                             <span className="text-[11px] text-[var(--color-text-muted)]">Timer (Minuten)</span>
                             <input
@@ -943,6 +952,7 @@ export function ChannelChat({
                         </div>
                       </div>
                     ))}
+                    </div>
                     <button
                       type="button"
                       role="switch"

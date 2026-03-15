@@ -32,6 +32,12 @@ export function ChannelSidebar({
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    const onOpenRequest = () => setMobileOpen(true);
+    window.addEventListener('brospify:open-chat-menu', onOpenRequest);
+    return () => window.removeEventListener('brospify:open-chat-menu', onOpenRequest);
+  }, []);
+
   const linkClass = (active: boolean) =>
     `block px-3 py-2 rounded-2xl text-sm ${
       active
@@ -130,7 +136,7 @@ export function ChannelSidebar({
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] z-[100] flex h-12 items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] px-4 py-2.5 text-[var(--color-text)] shadow-lg backdrop-blur-xl transition-all duration-300 ease-out active:scale-95 md:hidden"
+        className="fixed left-3 top-[max(0.75rem,env(safe-area-inset-top))] z-[120] flex h-12 items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg-dark)] px-4 py-2.5 text-[var(--color-text)] shadow-lg backdrop-blur-xl transition-all duration-300 ease-out active:scale-95 md:hidden"
         aria-label="Kanäle öffnen"
       >
         <span aria-hidden className="text-xl leading-none">≡</span>
